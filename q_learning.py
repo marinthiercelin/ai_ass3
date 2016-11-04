@@ -13,7 +13,7 @@ class agent(object):
 		# Set USE_SDL to true to display the screen. ALE must be compilied
 		# with SDL enabled for this to work. On OSX, pygame init is used to
 		# proxy-call SDL_main.
-		USE_SDL = True
+		USE_SDL = False
 		if USE_SDL:
 		  if sys.platform == 'darwin':
 			import pygame
@@ -27,24 +27,25 @@ class agent(object):
 		self.ale.loadROM("ms_pacman.bin")
 		#persistent:
 		self.Q = {} #, a table of action values indexedby state and action, initially zero
-		self.Nsa = {} #, a table of frequenciesfor state–action pairs, initially zero
+		self.N = {} #, a table of frequenciesfor state-action pairs, initially zero
 		self.s = None
 		self.a = None
 		self.r = 0
-		self.actions = ale.getMinimalActionSet()
+		self.actions = self.ale.getMinimalActionSet()
+		print self.actions
 		#the previous state, action, and reward, initially null
 
 	def Q_LEARNING_AGENT(self,state,reward):
 		if self.ale.game_over():
 			self.updateQ(self.s,None,reward)
 		if self.s is not None: 
-			incrementN(self.s,self.a) 
-			val = computeNewQ(self.s,self.a,reward,state)
-			updateQ(self.s,self.a,val) 
-			self.s = state
-			self.a = chooseAct(legal_actions)
-			self.r = reward 
-			return a
+			self.incrementN(self.s,self.a) 
+			val = self.computeNewQ(self.s,self.a,reward,state)
+			self.updateQ(self.s,self.a,val) 
+		self.s = state
+		self.a = self.chooseAct(state)
+		self.r = reward 
+		return self.a
 			
 	def computeNewQ(self, s,a,reward,state):
 		qsa = self.getQ(s,a)
@@ -55,7 +56,7 @@ class agent(object):
 				maxQ = val
 		n = self.getN(s,a)
 		alp = self.alpha(n)
-		v = qsa + alp*(reward + 0.9*maxQ − qsa)
+		v = qsa  + alp*(reward + 0.9*maxQ - qsa)
 		return v
 
 	def chooseAct(self,state):
@@ -76,14 +77,13 @@ class agent(object):
 		
 
 	def updateQ(self,s,a, value):
-		self.Q[hash(str(s)+ "/" + str(a))] = value
+		self.Q[str(s)+"/"+str(a)] = value
 	def getQ(self,s,a):
-		return self.Q.get(hash(str(s) + "/" + str(a)), 0)
+		return self.Q.get(str(s)+"/" +str(a), 0)
 	def incrementN(self,s,a):
-		val = self.N.get(hash(str(s) +"/" str(a)), 0)
-		N[hash(str(s) +"/" str(a))] = val + 1
+		self.N[str(s)+"/" +str(a)] = self.getN(s,a) + 1
 	def getN(self,s,a):
-		return  self.N.get(hash(str(s) +"/" str(a)), 0)
+		return  self.N.get(str(s)+"/"+str(a), 0)
 		
 	def play(self, number):
 		for episode in xrange(number):
@@ -91,15 +91,14 @@ class agent(object):
 			self.s = None
 			self.a = None
 			reward = 0
-			while not ale.game_over():
+			while not self.ale.game_over():
 				state = hash(get_feature(self.ale.getScreen()))
-				a = self.Q_LEARNING_AGENT(state,reward)
+				action = self.Q_LEARNING_AGENT(state,reward)
 				# Apply an action and get the resulting reward
-				reward = ale.act(a);
+				reward =self.ale.act(action);
 				total_reward += reward
 			print 'Episode', episode, 'ended with score:', total_reward
-			print get_feature(ale.getScreen())
-			ale.reset_game()
+			self.ale.reset_game()
 		
 player = agent()
 player.play(2)
