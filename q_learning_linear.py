@@ -1,8 +1,9 @@
 import sys
 from random import randrange
 from ale_python_interface import ALEInterface
-from screen import get_feature
+from screen_linear import get_feature
 
+#q_learning with linear function approximation
 class agent(object):
 	def __init__(self):
 		self.ale = ALEInterface()
@@ -26,8 +27,7 @@ class agent(object):
 		# Load the ROM file
 		self.ale.loadROM("ms_pacman.bin")
 		#persistent:
-		self.tetas = []
-		self.Q = {} #, a table of action values indexedby state and action, initially zero
+		self.tetas = 128*16*14*[1/(128*16*14)]
 		self.N = {} #, a table of frequenciesfor state-action pairs, initially zero
 		self.s = None
 		self.a = None
@@ -93,7 +93,7 @@ class agent(object):
 			self.a = None
 			reward = 0
 			while not self.ale.game_over():
-				state = hash(get_feature(self.ale.getScreen()))
+				state = get_feature(self.ale.getScreen()))
 				action = self.Q_LEARNING_AGENT(state,reward)
 				# Apply an action and get the resulting reward
 				reward =self.ale.act(action);

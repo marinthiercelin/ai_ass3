@@ -1,5 +1,6 @@
 def get_feature(screen):
-	features = ""
+	features = []
+	string = ""
 	for i in range(16):
 		for j in range(14):
 			feature = []
@@ -10,7 +11,8 @@ def get_feature(screen):
 					val = screen[pos1 + pos2 + l]
 					if val not in feature:
 						feature.append(val)
-						features += str(val)+","
-			features += "/"
-	return features
+						string += str(val) + ","
+			string += "/"
+			features.append(feature)
+	return (features,hash(string))
 			
