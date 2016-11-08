@@ -27,8 +27,8 @@ class agent(object):
 		self.ale.loadROM("ms_pacman.bin")
 		#persistent:
 		self.tetas = []
-		self.Q = {} #, a table of action values indexedby state and action, initially zero
-		self.N = {} #, a table of frequenciesfor state-action pairs, initially zero
+		self.Q = self.txtToMap('qvalues.txt') #, a table of action values indexedby state and action, initially zero
+		self.N = self.txtToMap('nvalues.txt') #, a table of frequenciesfor state-action pairs, initially zero
 		self.s = None
 		self.a = None
 		self.r = 0
@@ -100,6 +100,33 @@ class agent(object):
 				total_reward += reward
 			print 'Episode', episode, 'ended with score:', total_reward
 			self.ale.reset_game()
+		self.mapToTxt(self.Q, 'qvalues.txt')
+		self.mapToTxt(self.N, 'nvalues.txt')
+			
+	def mapToTxt(self, hMap, filepath):
+		f = open(filepath, 'r+')
+		for elem in hMap.keys():
+			toWrite = str(elem) + " " + str(hMap[elem]) + "\n"
+			f.write(toWrite)
+		f.close(); 
+
+		
+	def txtToMap(self, filepath): 
+		newMap = {}
+		f = open(filepath)
+		while True:
+			string = f.readline(); 
+			if not string: break
+			tmp = self.stringSplitter(string)
+			newMap[tmp[0]] = float(tmp[1]); 
+		f.close()
+		return newMap; 
+
+	def stringSplitter(self, string): 
+		i = string.find(' '); 
+		head = string[:i]
+		rest = string[i+1: len(string)-1] # getting rid of the \n's
+		return (head, rest)
 		
 player = agent()
 player.play(2)
