@@ -30,8 +30,9 @@ class agent(object):
 		self.weights = 16*14*128*4*[0] # one weight for every pair of (color action) in every sub_screen
 		self.N = {} #, a table of frequenciesfor state-action pairs, initially zero
 		self.actions = [2,3,4,5]
-		self.discount = 0.99
-		self.alpha = 0.9
+		self.discount = 0.4
+		self.alpha = 0.4
+		self.COUNT = 0
 		print self.actions
 		#the previous state, action, and reward, initially null
 
@@ -40,18 +41,20 @@ class agent(object):
 			#self.updateQ(self.last_state,None,self.last_reward)
 		if self.last_state is not None: 
 			self.incrementN(self.last_state,self.last_action) 
-			q_diff = self.computeQDiff(self.last_state,self.last_action,self.last_reward,state)
+			q_diff = self.computeQDiff(self.last_state,self.last_action,reward,state)
 			self.update_weights(self.last_state,self.last_action,q_diff) 
 		self.last_state = state
 		self.last_action = self.chooseAct(state)
-		self.last_reward = reward 
 		return self.last_action
 	
 	def update_weights(self,state, action, q_diff):
 		state_tab = state[0]
 		for sub_screen in xrange(len(state_tab)):
 			for color in state_tab[sub_screen]:
-				val = self.getWeight(sub_screen,color,action) + self.get_alpha(state,action)*q_diff
+				up = self.get_alpha(state,action)*q_diff
+				val = self.getWeight(sub_screen,color,action) + up
+				#if up != 0:
+					#print "value of update : " + str(up)
 				self.updateWeight(sub_screen,color,action,val)
 			
 	def computeQDiff(self, s,a,reward,state):
@@ -70,7 +73,7 @@ class agent(object):
 		maxQ = self.getQ(state,self.actions[0])
 		for act in self.actions:
 			val = self.getQ(state,act)
-			if val > maxQ: 
+			if val > maxQ or (val == maxQ and randrange(10) == 5): 
 				maxQ = val
 				a = act
 		return (a,maxQ)
@@ -84,15 +87,21 @@ class agent(object):
 		return self.weights[index]
 	
 	def updateWeight(self,sub_screen,color,action,value):
+		if value != 0 and self.COUNT < 50:
+			self.COUNT += 1
+			print " updating weight : " + str((sub_screen,color,action)) + " with value : " + str(value)
 		index = sub_screen*4*128 + color*4 + action
 		self.weights[index] = value
 		
 	def getQ(self,state,action):
+		#if self.getN(state,action) == 0 : return 3
 		state_tab = state[0]
 		q = 0
 		for sub_screen in xrange(len(state_tab)):
 			for color in state_tab[sub_screen]:
 				q += self.getWeight(sub_screen,color,action)
+		#if q != 0:
+			#print "computed q = " + str(q)
 		return q
 		
 	def incrementN(self,state,action):
@@ -111,17 +120,18 @@ class agent(object):
 		total_reward = 0
 		self.last_state = get_feature(self.ale.getScreen())
 		self.last_action = self.chooseAct(self.last_state)
-		self.last_reward = self.ale.act(self.last_action)
-		curr_reward = 0
+		curr_reward = self.ale.act(self.last_action)/10
 		life = self.ale.lives()
 		print life
-		while not self.ale.game_over():
+		while (not self.ale.game_over()) or (self.COUNT < 50) :
+			if self.COUNT < 50 and curr_reward != 0:
+				print curr_reward
 			curr_state = get_feature(self.ale.getScreen())
 			action = self.Q_LEARNING_AGENT(curr_state,curr_reward)
 			# Apply an action and get the resulting reward
-			curr_reward = self.ale.act(action)
+			curr_reward = self.ale.act(action)/10
 			if life > self.ale.lives():
-				curr_reward = -100
+				curr_reward = -10
 				life = self.ale.lives()
 				print life
 			total_reward += curr_reward
@@ -137,6 +147,7 @@ class agent(object):
 	def listToTxt(self, w_list, filepath):
 		f = open(filepath, 'w')
 		for elem in w_list:
+			print "elem : " + str(elem)
 			toWrite = str(elem)+"\n"
 			f.write(toWrite)
 		f.close();
