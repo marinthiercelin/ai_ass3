@@ -4,7 +4,7 @@ from ale_python_interface import ALEInterface
 from screen_linear import get_feature
 
 class game(object):
-	def __init__(self):
+	def __init__(self,display):
 		self.ale = ALEInterface()
 		
 		# Get & Set the desired settings
@@ -13,7 +13,7 @@ class game(object):
 		# Set USE_SDL to true to display the screen. ALE must be compilied
 		# with SDL enabled for this to work. On OSX, pygame init is used to
 		# proxy-call SDL_main.
-		USE_SDL = True
+		USE_SDL = display
 		if USE_SDL:
 		  if sys.platform == 'darwin':
 			import pygame
@@ -31,6 +31,9 @@ class game(object):
 	
 	def getState(self):
 		return get_feature(self.ale.getScreen())
+		
+	def getScreen(self):
+		return self.ale.getScreen()
 		
 	def reset_game(self):
 		self.ale.reset_game()

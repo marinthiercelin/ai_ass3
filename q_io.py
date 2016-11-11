@@ -1,5 +1,5 @@
 def mapToTxt(hMap, filepath):
-	f = open(filepath, 'r+')
+	f = open(filepath, 'w')
 	for elem in hMap.keys():
 		toWrite = str(elem) + " " + str(hMap[elem]) + "\n"
 		f.write(toWrite)
@@ -13,7 +13,7 @@ def listToTxt(w_list, filepath):
 	f.close();
 
 	
-def txtToMap(filepath): 
+'''def txtToMap(filepath): 
 	newMap = {}
 	f = open(filepath)
 	while True:
@@ -22,7 +22,25 @@ def txtToMap(filepath):
 		tmp = stringSplitter(string)
 		newMap[tmp[0]] = float(tmp[1]); 
 	f.close()
+	return newMap;'''
+
+def txtToMap(filepath): 
+	newMap = {}
+	f = open(filepath,'r')
+	for string in f:
+		tmp = string.split()
+		if len(tmp) == 2 :
+			newMap[tmp[0]] = float(tmp[1]); 
+	f.close()
 	return newMap;
+
+def save_average(filepath ,number, average):
+	f = open(filepath, 'a')
+	toWrite = "number of play : " + str(number) + " average : " + str(average) + "\n"
+	f.write(toWrite)
+	f.close()
+	
+	
 
 def txtToList(filepath): 
 	w_list = []
@@ -32,7 +50,7 @@ def txtToList(filepath):
 	f.close()
 	return w_list; 
 
-def stringSplitter(self, string): 
+def stringSplitter(string): 
 	i = string.find(' '); 
 	head = string[:i]
 	rest = string[i+1: len(string)-1] # getting rid of the \n's
