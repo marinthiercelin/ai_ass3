@@ -31,7 +31,7 @@ class agent(object):
 			
 	def computeNewQ(self, s,a,reward,state):
 		qsa = self.getQ(s,a)
-		maxQ = self.get_max_action(state)[1]
+		maxQ = self.get_max_action(state, False)[1]
 		#print "value of state 1 " + str(qsa) + " value of state 2 " + str(maxQ)
 		v = (reward + self.discount*maxQ - qsa)
 		#if abs(v) < 0.01:
@@ -39,11 +39,30 @@ class agent(object):
 		return qsa + self.get_alpha(s,a)*v 
 
 	def chooseAct(self,state):
-		v = randrange(10)
-		if v == 5: return self.actions[randrange(len(self.actions))]
-		return self.get_max_action(state)[0]
+		n = 0
+		for act in self.actions:
+			n += self.getN(state, act)
+		if n < 10:
+			v = randrange(10)
+		elif n < 50:
+			v = randrange(20)
+		elif n < 100:
+			v = randrange(50)
+		else :
+			v = 0
+		return self.get_max_action(state, v== 5)[0]
 		
-	def get_max_action(self,state):
+	def get_max_action(self,state,explore):
+		if explore :		
+			a = self.actions[0]
+			minN = self.getN(state,self.actions[0])
+			for act in self.actions[1:]:
+				val = self.getN(state,act)
+				if val < minN or (val == minN and randrange(10) == 5): 
+					minN = val
+					a = act
+			return (a,minN)
+			
 		a = self.actions[0]
 		maxQ = self.getQ(state,self.actions[0])
 		for act in self.actions[1:]:
@@ -85,15 +104,25 @@ class agent(object):
 		self.last_action = self.chooseAct(self.last_state)
 		curr_reward = self.ale.act(self.last_action)
 		life = self.ale.lives()
+		l_states = 10*[0]
 		print life
 		while not self.ale.game_over():
-			if curr_reward != 0:
-				print curr_reward
+			#if curr_reward != 0:
+				#print curr_reward
 			curr_state = self.tracker.pacDanger()
+			
+			''''if curr_state != self.last_state:
+				new = 10*[0]
+				for st in range(len(l_states) -1):
+					new[st] = l_states[st+1]
+				new[len(l_states) -1] = curr_state
+				l_states = new'''
+			
 			action = self.Q_LEARNING_AGENT(curr_state,curr_reward)
 			# Apply an action and get the resulting reward
 			curr_reward = self.ale.act(action)
 			if life > self.ale.lives():
+				#print "states that lead to death: " + str(l_states)
 				curr_reward = -100
 				life = self.ale.lives()
 				print life
@@ -109,4 +138,5 @@ class agent(object):
 		q_io.mapToTxt(self.Q,filename_q)
 		
 player = agent(False)
-player.play(50)
+while True:
+	player.play(10)

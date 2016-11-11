@@ -12,6 +12,7 @@ def get_feature(screen):
 					if val not in feature and val != 74 and val != 144 and val != 0:
 						feature.append(val)
 						string += str(val) + ","
+					
 			string += "/"
 			features.append(feature)
 	return (features,hash(string))

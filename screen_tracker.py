@@ -67,4 +67,4 @@ class tracker(object):
 					  
 
 	def isDanger(self,col): 
-		return col not in [42, 144, 0, 74, 89, 68, 24] # All those are nice colors
+		return col not in [42, 144, 0, 74, 89, 84, 58, 68, 24] # All those are nice colors

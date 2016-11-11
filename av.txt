@@ -1,2 +1,9 @@
-
-number of play : 1 average : 400.0
+number of play : 10 average : 234.0
+number of play : 10 average : 362.0
+number of play : 10 average : 291.0
+number of play : 10 average : 208.0
+number of play : 10 average : 245.0
+number of play : 10 average : 254.0
+number of play : 10 average : 264.0
+number of play : 10 average : 286.0
+number of play : 10 average : 273.0
