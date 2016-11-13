@@ -56,16 +56,119 @@ def printScreen2(screen):
 				prev = k
 			else:
 				string += "-"
-		print " l: " +str(i)+string 
+		print " l: " +str(i)+string
+
+def printScreen5(screen):
+	f = open("background3.txt","w")
+	for i in xrange(210):
+		string = ""
+		prev = -1
+		for j in xrange(160):
+			pos = i*160+ j
+			k = screen[pos]
+			if k!= 144 and k != 74 and k != 0:
+				string += str(k) + ","
+				prev = k
+			else:
+				if k == 144:
+					string += ";"
+				if k == 74:
+					string += "|"
+		f.write(string + "\n")
+	f.close()
+
+def printScreen3(screen):
+	f = open("background4.txt","w")
+	for i in xrange(210):
+		string = ""
+		prev = -1
+		for j in xrange(160):
+			pos = i*160+ j
+			k = screen[pos]
+			if k!= 144 and k != 74 and k != 0 and k != 24 and k != 68 and k != 40:
+				string += ";"
+				prev = k
+			else:
+				if k == 24 or k == 68 or k == 40 or k == 0:
+					string += "*"
+				if k == 144:
+					string += ";"
+				if k == 74:
+					v1 = False
+					v2 = False
+					v3 = False
+					v4 = False
+					if j < 157:
+						v1 = screen[pos+1] == 74 and screen[pos+2] == 74 and screen[pos +3] == 74 
+					if j < 158 and j > 0:
+						v2 = screen[pos - 1] == 74 and screen[pos +1] == 74 and screen[pos+2] == 74
+					if j < 159 and j > 1:
+						v3 = screen[pos- 1] == 74 and screen[pos +1] == 74 and screen[pos -2] == 74
+					if j > 2:
+						v4 = screen[pos - 1] == 74 and screen[pos - 3] == 74 and screen[pos -2] == 74
+					v5 = False
+					v6 = False
+					if i > 1 :
+						v5 = screen[160*(i-2) + j] == 74
+					if i < 208 :
+						v6 = screen[160*(i+2) + j] == 74 
+					if (((not v1)and(not v2) and (not v3) and v4) or ((not v1)and(not v2) and (not v4) and v3) or ((not v1)and(not v4) and (not v3) and v2) or ((not v4)and(not v2) and (not v3) and v1))  and (not v5) and (not v6):
+						string += ";"
+					else:
+						string += "|"
+						
+						
+		f.write("l:" + str(i) + string + "\n")
+	f.close()
+
+def printScreen4(screen):
+	bg = get_background("background4.txt")
+	f = open("object1.txt","w")
+	for i in xrange(210):
+		string = ""
+		prev = -1
+		for j in xrange(160):
+			pos = i*160+ j
+			k = screen[pos]
+			if k == bg[pos]:
+				string += "."
+				prev = k
+			else:
+				if k == 144:
+					string += ";"
+				elif k == 74:
+					string += "|"
+				elif k == 42 or  k == 89:
+					string += ","
+				else:
+					string += "!"
+		f.write(string + "\n")
+	f.close()
+	 
+def get_background(file_name):
+		f = open(file_name,"r")
+		bg = []
+		while True:
+			c = f.read(1)
+			if not c:
+				break
+			if c == '*':
+				bg.append(0)
+			if c == ';':
+				bg.append(144)
+			if c == '|':
+				bg.append(74)
+		f.close()
+		return bg
 
 for episode in xrange(1):
 	total_reward = 0
 	k = 0
 	while not ale.game_over():
-		if k == 600:
+		if k == 0:
 			screen = ale.getScreen()
 			#printScreen(screen)
-			printScreen2(screen)
+			printScreen4(screen)
 		k += 1
 		a = legal_actions[randrange(len(legal_actions))]
 		# Apply an action and get the resulting reward

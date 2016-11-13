@@ -13,7 +13,7 @@ class agent(object):
 		self.tracker = tracker(self.ale) 
 		#persistent:
 		#, a table of action values indexedby state and action, initially zero
-		self.load('n_values.txt','q_values.txt') #, a table of frequenciesfor state-action pairs, initially zero 
+		self.load('n_values_2.txt','q_values_2.txt') #, a table of frequenciesfor state-action pairs, initially zero 
 		self.actions = [2,3,4,5]
 		self.discount = 0.99
 		self.alpha = 0.9
@@ -78,15 +78,15 @@ class agent(object):
 		
 	
 	def updateQ(self,s,a, value):
-		self.Q[str(s)+"/"+str(a)] = value
+		self.Q[str(s[0])+ " " + str(s[1]) + " "+ str(a)] = value
 	def getQ(self,s,a):
-		return self.Q.get(str(s)+"/" +str(a), 0)
+		return self.Q.get(str(s[0])+ " " + str(s[1]) + " "+ str(a), 0)
 		
-	def incrementN(self,state,action):
-		self.N[str(state) + "/" +str(action)] = self.getN(state,action) + 1
+	def incrementN(self,s,a):
+		self.N[str(s[0])+ " " + str(s[1]) + " "+ str(a)] = self.getN(s,a) + 1
 	
 	def getN(self,s,a):
-		return  self.N.get(str(s)+"/"+str(a), 0)
+		return  self.N.get(str(s[0])+ " " + str(s[1]) + " "+ str(a), 0)
 		
 	def play(self, number):
 		summ = 0
@@ -95,7 +95,7 @@ class agent(object):
 			summ += total_reward
 			print 'Episode', episode, 'ended with score:', total_reward
 			self.ale.reset_game()
-			self.save('n_values.txt','q_values.txt')
+			self.save('n_values.txt_2','q_values.txt_2')
 		q_io.save_average('av.txt',number,summ*1.0/number)
 	
 	def one_game(self):
@@ -137,6 +137,5 @@ class agent(object):
 		q_io.mapToTxt(self.N,filename_n)
 		q_io.mapToTxt(self.Q,filename_q)
 		
-player = agent(False)
-while True:
-	player.play(10)
+player = agent(True)
+player.play(1)

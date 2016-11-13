@@ -29,8 +29,8 @@ def txtToMap(filepath):
 	f = open(filepath,'r')
 	for string in f:
 		tmp = string.split()
-		if len(tmp) == 2 :
-			newMap[tmp[0]] = float(tmp[1]); 
+		if len(tmp) == 4:
+			newMap[tmp[0] + " " + tmp[1] + " " + tmp[2] ] = float(tmp[3]) 
 	f.close()
 	return newMap;
 

@@ -3,6 +3,7 @@ class tracker(object):
 		self.ale = ale
 		self.x = 0
 		self.y = 0
+		self.background = self.get_background("background4.txt")
 	
 	def findZePac(self):
 		x = self.x
@@ -68,3 +69,83 @@ class tracker(object):
 
 	def isDanger(self,col): 
 		return col not in [42, 144, 0, 74, 89, 84, 58, 68, 24] # All those are nice colors
+	
+	def computeState(self):
+		sub = divide_screen(self.ale.getScreen())
+		pacpos = (-1,-1)
+		for k in xrange(13):
+			for l in xrange(16):
+				if 89 in sub[k*10+l] or 42 in sub[k*10+l]:
+					pacpos = (k,l)
+		ND, NP , WD, WP, ED, EP, SD ,SP = -1
+		
+		if pacpos == (-1,-1) : return (ND,NP,WD,WP,ED,EP,SD,SP)
+		
+		k = pos[0]
+		l = pos[1]
+		if k > 0 :
+			ND , NP = 0
+			if self.cont_Danger(sub[(k-1)*10 + l]) :
+				ND = 1
+			if 74 in sub[(k-1)*10 + l]:
+				NP = 1
+		
+		if k < 12 :
+			SD , SP = 0
+			if self.cont_Danger(sub[(k+1)*10 + l]) :
+				SD = 1
+			if 74 in sub[(k+1)*10 + l]:
+				SP = 1
+		if l > 0 :
+			WD , WP = 0
+			if self.cont_Danger(sub[(k)*10 + l -1]) :
+				WD = 1
+			if 74 in sub[(k)*10 + l -1]:
+				WP = 1
+		if l < 9 :
+			ED , EP = 0
+			if self.cont_Danger(sub[(k)*10 + l +1]) :
+				ED = 1
+			if 74 in sub[(k)*10 + l +1]:
+				EP = 1
+		return (ND,NP,WD,WP,ED,EP,SD,SP)
+		
+			
+	def cont_Danger(self, sub):
+		for color in sub:
+			if self.isDanger(color):
+				return True
+		return False
+		
+		
+	def get_background(self,file_name):
+		f = open(file_name,"r")
+		bg = []
+		while True:
+			c = f.read(1)
+			if not c:
+				break
+			if c == '*':
+				bg.append(0)
+			if c == ';'
+				bg.append(144)
+			if c == '|'
+				bg.append(74)
+		f.close()
+		return bg
+	
+	def divideScreen(screen):
+		features = 13*10*[[]]
+		string = ""
+		for i in range(169):
+			for j in range(160):
+				pos = 160*(i+1) + j 
+				color = screen[pos]
+				if color != self.background[pos]:
+					k = (i - (i%13))/13
+					l = (j - (j%16))/10
+					features[k*10 + l].append(color) 
+		return features
+			
+		
+		
