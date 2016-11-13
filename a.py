@@ -17,7 +17,7 @@ ale.setInt('random_seed', 123)
 # Set USE_SDL to true to display the screen. ALE must be compilied
 # with SDL enabled for this to work. On OSX, pygame init is used to
 # proxy-call SDL_main.
-USE_SDL = True
+USE_SDL = False
 if USE_SDL:
 	if sys.platform == 'darwin':
 		import pygame
@@ -123,7 +123,7 @@ def printScreen3(screen):
 
 def printScreen4(screen):
 	bg = get_background("background4.txt")
-	f = open("object1.txt","w")
+	f = open("object2.txt","w")
 	for i in xrange(210):
 		string = ""
 		prev = -1
@@ -139,9 +139,9 @@ def printScreen4(screen):
 				elif k == 74:
 					string += "|"
 				elif k == 42 or  k == 89:
-					string += ","
-				else:
 					string += "!"
+				else:
+					string += str(k) +","
 		f.write(string + "\n")
 	f.close()
 	 
@@ -160,19 +160,19 @@ def get_background(file_name):
 				bg.append(74)
 		f.close()
 		return bg
+		
 
-for episode in xrange(1):
+for episode in xrange(200):
 	total_reward = 0
 	k = 0
 	while not ale.game_over():
-		if k == 0:
-			screen = ale.getScreen()
-			#printScreen(screen)
-			printScreen4(screen)
-		k += 1
 		a = legal_actions[randrange(len(legal_actions))]
 		# Apply an action and get the resulting reward
 		reward = ale.act(a);
+		if reward > 10:
+			print "happened"
+			screen = ale.getScreen()
+			printScreen4(screen)
 		total_reward += reward
 	print 'Episode', episode, 'ended with score:', total_reward
 	ale.reset_game()
