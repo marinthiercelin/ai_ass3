@@ -123,3 +123,16 @@ number of play : 1 average : 200.0
 number of play : 1 average : 90.0
 number of play : 1 average : 390.0
 number of play : 1 average : 210.0
+number of play : 1 average : 160.0
+number of play : 1 average : 330.0
+number of play : 1 average : 240.0
+number of play : 1 average : 160.0
+number of play : 1 average : 330.0
+number of play : 1 average : 160.0
+number of play : 1 average : 730.0
+number of play : 1 average : 370.0
+number of play : 1 average : 260.0
+number of play : 1 average : 110.0
+number of play : 1 average : 520.0
+number of play : 1 average : 130.0
+number of play : 1 average : 250.0

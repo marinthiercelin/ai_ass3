@@ -149,6 +149,7 @@ class agent(object):
 					curr_reward = -100
 					life = self.ale.lives()
 					print life
+				if curr_reward > 10: print "reward : " + str(curr_reward)
 				total_reward += curr_reward
 			else: self.ale.act(0)
 		return total_reward + 300
@@ -164,7 +165,9 @@ class agent(object):
 		while not self.ale.game_over():
 			state = self.tracker.pacDanger()
 			action = self.get_max_action(state,False)[0]
-			total_reward += self.ale.act(action)
+			reward = self.ale.act(action)
+			if reward > 10: print "reward : " + str(reward)
+			total_reward += reward
 		return total_reward
 		
 	
