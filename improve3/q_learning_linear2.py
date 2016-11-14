@@ -176,6 +176,6 @@ class agent(object):
 	def save(self,filename_n):
 		q_io.mapToTxt(self.N,filename_n)
 		
-player = agent(False)
+player = agent(True)
 while True:
-	player.learn(1)
+	player.play(1)

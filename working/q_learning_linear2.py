@@ -94,7 +94,7 @@ class agent(object):
 			summ += total_reward
 			print 'Episode', episode, 'ended with score:', total_reward
 			self.ale.reset_game()
-			self.save('n_values.txt','q_values.txt')
+			self.save('n_n_values.txt','n_q_values.txt')
 		q_io.save_average('av.txt',number,summ*1.0/number)
 	
 	def one_learn(self):
